@@ -31,15 +31,11 @@ namespace XPosConnect.Controllers
             _logger.LogInformation($"Received request to generate QR code with data: dto={JsonSerializer.Serialize(dto)}");
             try
             {
-                _service.GenQrCode(dto);
+                var data = _service.GenQrCode(dto);
 
                 _logger.LogInformation("QR code generated successfully.");
 
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "QR Code generated successfully."
-                });
+                return Ok(data);
             }
             catch (Exception ex)
             {

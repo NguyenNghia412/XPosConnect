@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XPosConnect.Lib.Dto.Communicate;
 using XPosConnect.Lib.Dto.Sdk;
 
 namespace XPosConnect.Lib
@@ -16,9 +17,18 @@ namespace XPosConnect.Lib
             ConnectDevice();
         }
 
-        public void GenQrCode(ShowQrDto dto)
+        public ResultGenerateQrDto GenQrCode(ShowQrDto dto)
         {
             ConnectDevice();
+
+            if (!isConnected)
+            {
+                return new ResultGenerateQrDto
+                {
+                    Success = false,
+                    Message = "Không kết nối được thiết bị XPos",
+                };
+            }
 
             UTF8Encoding utf8 = new UTF8Encoding();
 
@@ -26,7 +36,8 @@ namespace XPosConnect.Lib
 
             unicodeString += $"|{dto.Amount}";
 
-            if (!string.IsNullOrEmpty(dto.Note)) {
+            if (!string.IsNullOrEmpty(dto.Note))
+            {
                 unicodeString += $"|{dto.Note}";
             }
 
@@ -40,10 +51,19 @@ namespace XPosConnect.Lib
             if (ret == 0)
             {
                 Console.WriteLine("QR Showed Success");
-            } 
+                return new ResultGenerateQrDto
+                {
+                    Success = true,
+                    Message = "success",
+                };
+            }
             else
             {
-                Console.WriteLine("QR Showed failed");
+                return new ResultGenerateQrDto
+                {
+                    Success = false,
+                    Message = "Không hiển thị được mã QR",
+                };
             }
         }
 
@@ -58,12 +78,6 @@ namespace XPosConnect.Lib
                 countTry++;
             }
             while (!isConnected && countTry < maxTry);
-
-            if (!isConnected)
-            {
-                throw new Exception("Không kết nối được thiết bị");
-            }
-            Console.WriteLine("Connected");
         }
     }
 }

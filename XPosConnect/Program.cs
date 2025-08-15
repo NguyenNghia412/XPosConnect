@@ -12,6 +12,38 @@ try
     //var builder = Host.CreateApplicationBuilder(args);
     var builder = WebApplication.CreateBuilder(args);
 
+    var allowedOriginsConfig = builder.Configuration["AllowedOrigins"] ?? string.Empty;
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("ConfiguredOrigins", policy =>
+        {
+            if (allowedOriginsConfig.Trim() == "*")
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            }
+            else
+            {
+                var origins = allowedOriginsConfig
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                if (origins.Length > 0)
+                {
+                    policy.WithOrigins(origins)
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                }
+                else
+                {
+                    // No origins configured = block all
+                    policy.WithOrigins(Array.Empty<string>());
+                }
+            }
+        });
+    });
+
     builder.WebHost.ConfigureKestrel((context, options) =>
     {
         options.Configure(context.Configuration.GetSection("Kestrel"));
@@ -23,6 +55,7 @@ try
     builder.Services.AddControllers();
 
     var host = builder.Build();
+    host.UseCors("ConfiguredOrigins");
     host.MapControllers();
     host.Run();
 }
