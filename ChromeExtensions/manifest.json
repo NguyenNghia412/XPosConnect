@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "XPOS Connector",
+  "version": "1.0",
+  "description": "Bridge Angular SPA with local XPOS service",
+  "permissions": [
+    "nativeMessaging"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "http://localhost:6002/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

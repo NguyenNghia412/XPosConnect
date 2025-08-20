@@ -22,7 +22,7 @@ namespace XPosConnect.Controllers
         [HttpGet("")]
         public ContentResult Home()
         {
-            string someContent = "Hello. Home";
+            string someContent = "Hello. This is XPOS service.";
 
             return new ContentResult
             {
