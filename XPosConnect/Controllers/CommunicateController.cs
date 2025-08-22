@@ -47,5 +47,28 @@ namespace XPosConnect.Controllers
                 });
             }            
         }
+
+        [HttpPost("show-text")]
+        public IActionResult ShowText([FromBody] ShowTextDto dto)
+        {
+            _logger.LogInformation($"Received request to show text: dto={JsonSerializer.Serialize(dto)}");
+            try
+            {
+                var data = _service.ShowText(dto);
+
+                _logger.LogInformation("Showed text successfully.");
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    error = "Internal Server Error",
+                    message = ex.Message
+                });
+            }
+        }
     }
 }

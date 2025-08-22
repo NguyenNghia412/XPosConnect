@@ -67,6 +67,46 @@ namespace XPosConnect.Lib
             }
         }
 
+        public ResultGenerateQrDto ShowText(ShowTextDto dto)
+        {
+            ConnectDevice();
+
+            if (!isConnected)
+            {
+                return new ResultGenerateQrDto
+                {
+                    Success = false,
+                    Message = "Không kết nối được thiết bị XPos",
+                };
+            }
+
+            UTF8Encoding utf8 = new UTF8Encoding();
+
+            string unicodeString = dto.Text;
+
+            byte[] encodedBytes = utf8.GetBytes(unicodeString);
+
+            int ret = XPosSdk.mf_showText(30, encodedBytes, encodedBytes.Length);
+
+            if (ret == 0)
+            {
+                Console.WriteLine("Text Showed");
+                return new ResultGenerateQrDto
+                {
+                    Success = true,
+                    Message = "success",
+                };
+            }
+            else
+            {
+                return new ResultGenerateQrDto
+                {
+                    Success = false,
+                    Message = "Không hiển thị được text",
+                };
+            }
+        }
+
         public void ConnectDevice()
         {
             int countTry = 0;

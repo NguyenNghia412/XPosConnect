@@ -4,8 +4,11 @@ window.addEventListener("message", (event) => {
 
   if (event.data.type && event.data.type === "XPOS_REQUEST") {
     console.log('CONTENT SEND MESSAGE REQUEST', event.data.payload)
+    const type = event.data.payload.type;
+    const data = event.data.payload.data;
+
     chrome.runtime.sendMessage(
-      { type: "show-qr", payload: event.data.payload },
+      { type: type, payload: data },
       (response) => {
         window.postMessage(
           { type: "XPOS_RESPONSE", response },
